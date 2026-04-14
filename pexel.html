@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pexels Clone</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green: #05a081; --green-dark: #048a6e;
+      --bg: #fff; --text: #1a1a2e; --gray: #6b7280;
+      --border: #e5e7eb; --nav-h: 64px;
+    }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* HEADER */
+    header {
+      position: fixed; top: 0; left: 0; width: 100%; z-index: 900;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; height: var(--nav-h);
+      background: transparent; transition: background 0.3s, box-shadow 0.3s;
+    }
+    header.scrolled { background: #fff; box-shadow: 0 1px 0 var(--border); }
+    header.scrolled .logo, header.scrolled nav a, header.scrolled .bell { color: var(--text); }
+    header.scrolled .upload-btn { background: var(--green); color: #fff; border-color: var(--green); }
+    .logo { font-size: 26px; font-weight: 700; color: #fff; cursor: pointer; text-decoration: none; flex-shrink: 0; }
+    nav { display: flex; align-items: center; gap: 8px; }
+    nav a { text-decoration: none; color: #fff; font-weight: 500; font-size: 15px; padding: 8px 12px; border-radius: 6px; transition: background 0.2s; white-space: nowrap; }
+    nav a:hover { background: rgba(255,255,255,0.15); }
+    header.scrolled nav a:hover { background: rgba(0,0,0,0.06); }
+    .dropdown { position: relative; }
+    .dropdown-content { display: none; position: absolute; top: calc(100% + 8px); left: 0; background: #fff; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.16); min-width: 200px; padding: 8px; z-index: 1000; }
+    .dropdown-content a { display: block; padding: 10px 14px; color: var(--text) !important; background: none !important; border-radius: 8px; font-size: 14px; }
+    .dropdown-content a:hover { background: #f3f4f6 !important; }
+    .dropdown:hover .dropdown-content { display: block; }
+    .nav-right { display: flex; align-items: center; gap: 10px; }
+    .bell { font-size: 20px; color: #fff; cursor: pointer; padding: 6px; }
+    .avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--green); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; cursor: pointer; flex-shrink: 0; }
+    .upload-btn { background: rgba(255,255,255,0.2); color: #fff; border: 1.5px solid rgba(255,255,255,0.6); padding: 8px 18px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; font-family: inherit; transition: all 0.2s; white-space: nowrap; }
+    .upload-btn:hover { background: rgba(255,255,255,0.3); }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
+    .hamburger span { width: 24px; height: 2px; background: #fff; border-radius: 2px; transition: all 0.3s; display: block; }
+    header.scrolled .hamburger span { background: var(--text); }
+    .mobile-menu { display: none; position: fixed; top: var(--nav-h); left: 0; right: 0; background: #fff; padding: 16px 24px 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); z-index: 800; flex-direction: column; gap: 4px; }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { text-decoration: none; color: var(--text); font-weight: 500; padding: 12px 16px; border-radius: 8px; font-size: 16px; transition: background 0.2s; }
+    .mobile-menu a:hover { background: #f3f4f6; }
+    .mobile-menu .mob-upload { margin-top: 8px; background: var(--green); color: #fff !important; text-align: center; border-radius: 10px; }
+
+    /* HERO */
+    .hero { position: relative; height: 100svh; min-height: 480px; background-image: url('https://images.pexels.com/photos/374870/pexels-photo-374870.jpeg'); background-size: cover; background-position: center; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 20px; }
+    .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.38) 100%); }
+    .hero-content { position: relative; z-index: 2; color: #fff; max-width: 740px; width: 100%; }
+    .hero-content h1 { font-size: clamp(22px, 4.5vw, 42px); font-weight: 700; line-height: 1.25; margin-bottom: 28px; text-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+    .search-bar { display: flex; align-items: center; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.25); width: 100%; }
+    .search-type { padding: 0 16px; height: 56px; border: none; border-right: 1.5px solid var(--border); font-size: 14px; font-family: inherit; color: var(--text); background: transparent; cursor: pointer; font-weight: 500; flex-shrink: 0; }
+    .search-input { flex: 1; border: none; height: 56px; padding: 0 16px; font-size: 16px; font-family: inherit; outline: none; color: var(--text); min-width: 0; }
+    .search-btn { background: var(--green); border: none; height: 56px; padding: 0 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; color: #fff; font-weight: 600; font-size: 15px; font-family: inherit; transition: background 0.2s; flex-shrink: 0; }
+    .search-btn:hover { background: var(--green-dark); }
+    .hero-attribution { position: absolute; bottom: 16px; right: 20px; z-index: 2; color: rgba(255,255,255,0.7); font-size: 12px; }
+
+    /* CATEGORIES */
+    .categories { position: sticky; top: var(--nav-h); z-index: 700; background: #fff; border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+    .categories::-webkit-scrollbar { display: none; }
+    .cat-tab { padding: 14px 16px; font-size: 14px; font-weight: 500; color: var(--gray); cursor: pointer; border: none; background: none; font-family: inherit; white-space: nowrap; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color 0.2s, border-color 0.2s; }
+    .cat-tab:hover { color: var(--text); }
+    .cat-tab.active { color: var(--text); font-weight: 600; border-bottom-color: var(--text); }
+
+    /* GALLERY HEADER */
+    .gallery-header { display: flex; align-items: center; justify-content: space-between; padding: 28px 24px 16px; flex-wrap: wrap; gap: 12px; }
+    .gallery-header h2 { font-size: clamp(18px, 3vw, 24px); font-weight: 700; }
+    .filter-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .filter-btn { padding: 8px 16px; border-radius: 20px; border: 1.5px solid var(--border); background: none; font-family: inherit; font-size: 13px; font-weight: 500; color: var(--gray); cursor: pointer; transition: all 0.2s; }
+    .filter-btn.active { border-color: var(--text); background: var(--text); color: #fff; }
+
+    /* MASONRY */
+    .masonry { columns: 3; column-gap: 12px; padding: 0 12px 60px; }
+    .masonry-item { break-inside: avoid; margin-bottom: 12px; border-radius: 12px; overflow: hidden; position: relative; cursor: pointer; display: block; }
+    .masonry-item img, .masonry-item video { width: 100%; display: block; border-radius: 12px; transition: transform 0.3s ease; }
+    .masonry-item:hover img, .masonry-item:hover video { transform: scale(1.02); }
+    .overlay-info { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 50%); opacity: 0; transition: opacity 0.25s; border-radius: 12px; display: flex; flex-direction: column; justify-content: flex-end; padding: 16px; }
+    .masonry-item:hover .overlay-info { opacity: 1; }
+    .photo-actions { display: flex; justify-content: space-between; align-items: center; }
+    .photo-author { color: #fff; font-size: 13px; font-weight: 500; }
+    .dl-icon { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.9); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s; }
+    .dl-icon:hover { background: #fff; }
+    .no-results { text-align: center; padding: 80px 24px; color: var(--gray); display: none; }
+    .no-results h3 { font-size: 22px; margin-bottom: 10px; color: var(--text); }
+
+    /* SEARCH RESULT BANNER */
+    .search-result-banner { display: none; padding: 20px 24px 0; font-size: 20px; font-weight: 700; }
+    .search-result-banner em { color: var(--green); font-style: normal; }
+    .clear-search { font-size: 13px; color: var(--gray); cursor: pointer; margin-left: 12px; font-weight: 500; text-decoration: underline; }
+
+    /* LIGHTBOX */
+    .lightbox { display: none; position: fixed; inset: 0; z-index: 1200; background: rgba(0,0,0,0.92); align-items: center; justify-content: center; padding: 20px; }
+    .lightbox.open { display: flex; }
+    .lightbox-content { position: relative; max-width: 90vw; max-height: 90vh; display: flex; align-items: center; justify-content: center; }
+    .lightbox-content img, .lightbox-content video { max-width: 90vw; max-height: 82vh; border-radius: 12px; object-fit: contain; box-shadow: 0 24px 80px rgba(0,0,0,0.5); }
+    .lightbox-close { position: fixed; top: 20px; right: 24px; width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.15); border: none; color: #fff; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+    .lightbox-close:hover { background: rgba(255,255,255,0.3); }
+    .lightbox-nav { position: fixed; top: 50%; transform: translateY(-50%); width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,0.15); border: none; color: #fff; font-size: 26px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+    .lightbox-nav:hover { background: rgba(255,255,255,0.3); }
+    .lightbox-prev { left: 16px; }
+    .lightbox-next { right: 16px; }
+    .lightbox-info { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); }
+    .lb-download { background: var(--green); color: #fff; border: none; padding: 10px 22px; border-radius: 8px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background 0.2s; white-space: nowrap; }
+    .lb-download:hover { background: var(--green-dark); }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) { .masonry { columns: 2; } }
+    @media (max-width: 768px) {
+      header { padding: 0 16px; }
+      nav { display: none; }
+      .hamburger { display: flex; }
+      .search-type { padding: 0 10px; font-size: 13px; }
+      .btn-text { display: none; }
+      .search-btn { padding: 0 18px; }
+      .gallery-header { padding: 20px 16px 12px; }
+      .masonry { padding: 0 8px 32px; column-gap: 8px; }
+      .masonry-item { margin-bottom: 8px; }
+      .categories { padding: 0 12px; }
+      .lightbox-nav { display: none; }
+      .search-result-banner { padding: 16px 16px 0; font-size: 17px; }
+    }
+    @media (max-width: 520px) { .masonry { columns: 1; } }
+    @media (max-width: 420px) {
+      .search-type { display: none; }
+      .search-input { padding: 0 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<header id="mainHeader">
+  <a class="logo" href="#" onclick="resetSearch();return false;">pexels</a>
+  <nav>
+    <a href="#">Explore</a>
+    <div class="dropdown">
+      <a href="#">More ▾</a>
+      <div class="dropdown-content">
+        <a href="#">Discover Photos</a>
+        <a href="#">Leaderboard</a>
+        <a href="#">Challenges</a>
+        <a href="#">Free Videos</a>
+        <a href="#">Pexels Blog</a>
+      </div>
+    </div>
+    <a href="#">License</a>
+    <div class="nav-right">
+      <span class="bell">🔔</span>
+      <div class="avatar">S</div>
+      <button class="upload-btn">Upload</button>
+    </div>
+  </nav>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#">Explore</a>
+  <a href="#">License</a>
+  <a href="#">Discover Photos</a>
+  <a href="#">Leaderboard</a>
+  <a href="#">Challenges</a>
+  <a href="#">Free Videos</a>
+  <a href="#">Pexels Blog</a>
+  <a href="#" class="mob-upload">Upload</a>
+</div>
+
+<section class="hero">
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <h1>The best free stock photos, royalty free<br>images &amp; videos shared by creators.</h1>
+    <div class="search-bar">
+      <select class="search-type" id="searchType">
+        <option value="all">All</option>
+        <option value="photos">Photos</option>
+        <option value="videos">Videos</option>
+      </select>
+      <input class="search-input" id="heroSearch" type="text"
+             placeholder="Search for free photos"
+             onkeydown="if(event.key==='Enter') doSearch()">
+      <button class="search-btn" onclick="doSearch()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <span class="btn-text">Search</span>
+      </button>
+    </div>
+  </div>
+  <div class="hero-attribution">Photo by Pixabay</div>
+</section>
+
+<div class="categories" id="categoriesBar">
+  <button class="cat-tab active" onclick="filterCategory(this,'all')">All</button>
+  <button class="cat-tab" onclick="filterCategory(this,'nature')">Nature</button>
+  <button class="cat-tab" onclick="filterCategory(this,'people')">People</button>
+  <button class="cat-tab" onclick="filterCategory(this,'city')">City &amp; Urban</button>
+  <button class="cat-tab" onclick="filterCategory(this,'animals')">Animals</button>
+  <button class="cat-tab" onclick="filterCategory(this,'food')">Food</button>
+  <button class="cat-tab" onclick="filterCategory(this,'travel')">Travel</button>
+  <button class="cat-tab" onclick="filterCategory(this,'fashion')">Fashion</button>
+  <button class="cat-tab" onclick="filterCategory(this,'technology')">Technology</button>
+  <button class="cat-tab" onclick="filterCategory(this,'video')">Videos</button>
+</div>
+
+<div class="search-result-banner" id="searchBanner"></div>
+
+<div class="gallery-header">
+  <h2 id="galleryTitle">Free Stock Photos</h2>
+  <div class="filter-row">
+    <button class="filter-btn active" onclick="setSort(this)">Trending</button>
+    <button class="filter-btn" onclick="setSort(this)">New</button>
+    <button class="filter-btn" onclick="setSort(this)">Popular</button>
+  </div>
+</div>
+
+<div id="noResults" class="no-results">
+  <h3>No results found</h3>
+  <p>Try searching for: nature, people, city, animals, food, travel, fashion, technology</p>
+</div>
+
+<div class="masonry" id="gallery"></div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightboxBg(event)">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <button class="lightbox-nav lightbox-prev" onclick="navLightbox(-1)">&#8249;</button>
+  <div class="lightbox-content" id="lightboxContent"></div>
+  <button class="lightbox-nav lightbox-next" onclick="navLightbox(1)">&#8250;</button>
+  <div class="lightbox-info">
+    <button class="lb-download" onclick="downloadCurrent()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      Free Download
+    </button>
+  </div>
+</div>
+
+<script>
+const MEDIA = [
+  { file:'pexels-alexander-mass-748453803-31592655.jpg',    type:'photo', tags:['people','portrait','fashion','lifestyle'],         author:'Alexander Mass' },
+  { file:'pexels-aljona-ovtsinnikova-121486965-31295906.jpg',type:'photo', tags:['nature','outdoors','landscape','travel','scenic'],  author:'Aljona Ovtsinnikova' },
+  { file:'pexels-andy-barbour-6964308.jpg',                  type:'photo', tags:['technology','work','lifestyle','people','indoor'],  author:'Andy Barbour' },
+  { file:'pexels-beelal-ng-2151097530-31552834.jpg',         type:'photo', tags:['city','urban','street','travel','architecture'],   author:'Beelal Ng' },
+  { file:'pexels-casnafu-31203734.jpg',                      type:'photo', tags:['nature','outdoors','landscape','animals','wildlife'],author:'Casnafu' },
+  { file:'pexels-christelle-wehbe-72523922-31500099.jpg',    type:'photo', tags:['fashion','portrait','people','lifestyle'],         author:'Christelle Wehbe' },
+  { file:'pexels-cottonbro-3992134.jpg',                     type:'photo', tags:['people','lifestyle','food','indoor','social'],     author:'Cottonbro Studio' },
+  { file:'pexels-deen-docs-2151173653-31581782.jpg',         type:'photo', tags:['travel','city','street','urban','architecture'],   author:'Deen Docs' },
+  { file:'pexels-ersin-basturk-399622110-18301868.jpg',      type:'photo', tags:['nature','landscape','outdoors','travel','scenic'], author:'Ersin Basturk' },
+  { file:'pexels-hameen-31633369.jpg',                       type:'photo', tags:['people','portrait','fashion','lifestyle'],         author:'Hameen' },
+  { file:'pexels-jay-soundo-2148060180-30472389.jpg',        type:'photo', tags:['music','people','lifestyle','arts','portrait'],    author:'Jay Soundo' },
+  { file:'pexels-kuma-jio-2150949207-31416365.jpg',          type:'photo', tags:['animals','nature','wildlife','outdoors','pets'],   author:'Kuma Jio' },
+  { file:'pexels-merwak_-399619273-26746959.jpg',            type:'photo', tags:['city','street','urban','travel','architecture'],   author:'Merwak' },
+  { file:'pexels-mgshotz-31633701.jpg',                      type:'photo', tags:['nature','landscape','outdoors','scenic','travel'], author:'Mgshotz' },
+  { file:'pexels-nadin-sh-78971847-11232216.jpg',            type:'photo', tags:['food','lifestyle','indoor','people','social'],     author:'Nadin Sh' },
+  { file:'pexels-robert-erban-184982972-11279737.jpg',       type:'photo', tags:['travel','landscape','nature','scenic','outdoors'],author:'Robert Erban' },
+  { file:'pexels-santesson89-31100360.jpg',                  type:'photo', tags:['nature','animals','wildlife','outdoors','scenic'], author:'Santesson89' },
+  { file:'pexels-vubui-30012258.jpg',                        type:'photo', tags:['city','architecture','urban','travel','building'], author:'Vubui' },
+  { file:'pexels-ysnapshotjournal-1675356955-31530553.jpg',  type:'photo', tags:['portrait','fashion','people','lifestyle'],         author:'Ysnapshot Journal' },
+  { file:'13346630_1080_1920_60fps.mp4',                     type:'video', tags:['video','nature','outdoors','scenic','travel'],     author:'Pexels Video' },
+];
+
+let currentQuery = '';
+let currentCategory = 'all';
+let visibleMedia = [...MEDIA];
+let lbIndex = 0;
+
+function render(items) {
+  const gallery = document.getElementById('gallery');
+  const noRes = document.getElementById('noResults');
+  gallery.innerHTML = '';
+  if (!items.length) { noRes.style.display = 'block'; visibleMedia = []; return; }
+  noRes.style.display = 'none';
+  visibleMedia = items;
+  items.forEach((m, i) => {
+    const div = document.createElement('div');
+    div.className = 'masonry-item';
+    div.onclick = () => openLightbox(i);
+    const dlBtn = `<div class="dl-icon" onclick="event.stopPropagation();downloadItem(${i})"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>`;
+    const overlay = `<div class="overlay-info"><div class="photo-actions"><span class="photo-author">${m.type==='video'?'📹 ':''}${m.author}</span>${dlBtn}</div></div>`;
+    if (m.type === 'video') {
+      div.innerHTML = `<video src="./images/${m.file}" autoplay muted loop playsinline></video>${overlay}`;
+    } else {
+      div.innerHTML = `<img src="./images/${m.file}" alt="${m.tags[0]}" loading="lazy">${overlay}`;
+    }
+    gallery.appendChild(div);
+  });
+}
+
+function applyFilters() {
+  let items = [...MEDIA];
+  const type = document.getElementById('searchType').value;
+  if (type === 'photos') items = items.filter(m => m.type === 'photo');
+  if (type === 'videos') items = items.filter(m => m.type === 'video');
+  if (currentCategory !== 'all') items = items.filter(m => m.tags.includes(currentCategory));
+  if (currentQuery) {
+    const q = currentQuery.toLowerCase();
+    items = items.filter(m =>
+      m.tags.some(t => t.includes(q)) ||
+      m.author.toLowerCase().includes(q) ||
+      m.file.toLowerCase().includes(q)
+    );
+  }
+  const banner = document.getElementById('searchBanner');
+  const title = document.getElementById('galleryTitle');
+  if (currentQuery) {
+    banner.style.display = 'block';
+    banner.innerHTML = `Results for "<em>${currentQuery}</em>" — ${items.length} found <span class="clear-search" onclick="resetSearch()">Clear search</span>`;
+    title.style.display = 'none';
+  } else {
+    banner.style.display = 'none';
+    title.style.display = 'block';
+  }
+  render(items);
+}
+
+function doSearch() {
+  currentQuery = document.getElementById('heroSearch').value.trim();
+  applyFilters();
+  if (currentQuery) {
+    setTimeout(() => {
+      document.getElementById('categoriesBar').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  }
+}
+
+function filterCategory(el, cat) {
+  currentCategory = cat;
+  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  applyFilters();
+}
+
+function setSort(el) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function resetSearch() {
+  currentQuery = '';
+  currentCategory = 'all';
+  document.getElementById('heroSearch').value = '';
+  document.getElementById('searchType').value = 'all';
+  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('.cat-tab').classList.add('active');
+  applyFilters();
+}
+
+function openLightbox(i) {
+  lbIndex = i;
+  renderLightbox();
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+  document.getElementById('lightboxContent').innerHTML = '';
+}
+
+function closeLightboxBg(e) { if (e.target === document.getElementById('lightbox')) closeLightbox(); }
+
+function renderLightbox() {
+  const m = visibleMedia[lbIndex];
+  const c = document.getElementById('lightboxContent');
+  if (m.type === 'video') {
+    c.innerHTML = `<video src="./images/${m.file}" controls autoplay muted loop playsinline></video>`;
+  } else {
+    c.innerHTML = `<img src="./images/${m.file}" alt="${m.author}">`;
+  }
+}
+
+function navLightbox(dir) {
+  lbIndex = (lbIndex + dir + visibleMedia.length) % visibleMedia.length;
+  renderLightbox();
+}
+
+function downloadItem(i) {
+  const a = document.createElement('a');
+  a.href = `./images/${visibleMedia[i].file}`;
+  a.download = visibleMedia[i].file;
+  a.click();
+}
+
+function downloadCurrent() { downloadItem(lbIndex); }
+
+window.addEventListener('scroll', () => {
+  document.getElementById('mainHeader').classList.toggle('scrolled', window.scrollY > 60);
+});
+
+function toggleMenu() {
+  document.getElementById('mobileMenu').classList.toggle('open');
+}
+
+document.addEventListener('keydown', e => {
+  const lb = document.getElementById('lightbox');
+  if (!lb.classList.contains('open')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowRight') navLightbox(1);
+  if (e.key === 'ArrowLeft') navLightbox(-1);
+});
+
+render(MEDIA);
+</script>
+</body>
+</html>

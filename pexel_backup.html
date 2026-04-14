@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pexels Clone</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #fff;
+      color: #fff;
+    }
+
+    header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 32px;
+      background: transparent;
+      color: white;
+    }
+
+    .logo {
+      font-family: 'Pacifico', cursive;
+      font-size: 28px;
+      color: white;
+      
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      position: relative;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: white;
+      font-weight: 500;
+      position: relative;
+      padding: 8px;
+    }
+
+    .dropdown {
+      position: relative;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: white;
+      color: black;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      min-width: 200px;
+      z-index: 1001;
+    }
+
+    .dropdown-content a {
+      display: block;
+      padding: 8px 12px;
+      text-decoration: none;
+      color: #333;
+    }
+
+    .dropdown-content a:hover {
+      background-color: #f0f0f0;
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    .upload-btn {
+      background-color: white;
+      color: black;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.5s;
+    }
+    .upload-btn:hover {
+       background-color: pink;
+
+    }
+
+    .hero {
+      position: relative;
+      height: 100vh;
+      background-image: url('https://images.pexels.com/photos/374870/pexels-photo-374870.jpeg');
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      color: white;
+      max-width: 800px;
+      padding: 0 20px;
+    }
+
+    .hero-content h1 {
+      font-size: 38px;
+      font-weight: bold;
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+
+    .search-wrapper {
+      display: flex;
+      align-items: center;
+      background-color: white;
+      border-radius: 32px;
+      padding: 6px;
+      max-width: 700px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+
+    .search-select {
+      background: transparent;
+      border: none;
+      font-size: 14px;
+      padding: 10px;
+      color: #333;
+      border-right: 1px solid #ccc;
+    }
+
+    .search-input {
+      flex: 1;
+      border: none;
+      padding: 14px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    .search-button {
+      background: none;
+      border: none;
+      padding: 0 16px;
+      cursor: pointer;
+      color: #666;
+    }
+
+    .nav-icons {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .circle-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background-color: white;
+      color: black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    .newhead {
+        display: flex;
+        background-color: #FFFFFF;
+        height: 200px;
+        width: 100%;
+        justify-content: center;
+        margin-top: 70px;
+        flex-direction: row;
+        gap: 40px;
+    }
+    .hp {
+        color: #4A4A4A;
+        font-size: 30px;
+        font-weight: bold;
+    }
+    .hp:hover {
+        color: red;
+    }
+    .headun {
+        background-color: #FFFFFF;
+        width: 100%;
+        height: 200px;
+        justify-content: space-between;
+        display: flex;
+        flex-direction: row;
+    }
+    .headun h1 {
+        color: black;
+        font-size: 30px;
+        margin-left: 20px;
+        margin-top: 40px;
+    }
+    .tbtn {
+        border-radius: 40px;
+        background-color: rgba(255, 255, 255, 1);
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: all 0.4s ease;
+        margin-bottom: 80px;
+        margin-right: 30px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-auto-rows: minmax(100px, auto);
+      gap: 20px;
+    }
+    .boxes1 {
+      /* background-color: yellow; */
+      border: 1px solid black;
+      grid-row: span 4;
+      border-radius: 10px;
+    }
+    .boxes2 {
+      /* background-color: yellow; */
+      border: 1px solid black;
+      grid-row: span 2;
+      border-radius: 10px;
+    }
+    .boxes3 {
+      /* background-color: yellow; */
+      border: 1px solid black;
+      grid-row: span 4;
+      border-radius: 10px;
+    }
+    .boxes4 {
+      /* background-color: yellow; */
+      border: 1px solid black;
+      grid-row: span 5;
+      border-radius: 10px;
+    }
+    .boxes5 {
+      /* background-color: yellow; */
+      border: 1px solid black;
+      grid-row: span 3;
+      border-radius: 10px;
+    }
+    .boxes6 {
+      /* background-color: yellow; */
+      border: 1px solid black;
+      grid-row: span 2;
+      border-radius: 10px;
+    }
+    .boxes7 {
+      /* background-color: yellow; */
+      border: 1px solid black;
+      grid-row: span 3;
+      border-radius: 10px;
+    }
+    .boxes8 {
+      border: 1px solid black;
+      grid-row: span 4;
+      border-radius: 10px;
+    }
+    .boxes9 {
+      /* background-color: yellow; */
+      border: 1px solid black;
+      grid-row: span 2;
+      border-radius: 10px;
+    }
+    .boxes10 {
+      /* background-color: yellow; */
+      border: 1px solid black;
+      grid-row: span 3;
+      border-radius: 10px;
+
+    }
+    .boxes11 {
+      /* background-color: yellow; */
+      border: 1px solid black;
+      grid-row: span 5;
+      border-radius: 10px;
+    }
+    .boxes12 {
+      /* background-color: yellow; */
+      border: 1px solid black;
+      grid-row: span 4;
+      border-radius: 10px;
+    }
+    .boxes13 {
+      /* background-color: yellow; */
+      border: 1px solid black;
+      grid-row: span 3;
+      border-radius: 10px;
+    }
+    .boxes14 {
+      /* background-color: yellow; */
+      border: 1px solid black;
+      grid-row: span 4;
+      border-radius: 10px;
+    }
+    .boxes15 {
+      /* background-color: yellow; */
+      border: 1px solid black;
+      grid-row: span 4;
+      border-radius: 10px;
+    }
+    .boxes16 {
+      /* background-color: yellow; */
+      border: 1px solid black;
+      grid-row: span 5;
+      border-radius: 10px;
+    }
+    .boxes17 {
+      /* background-color: yellow; */
+      border: 1px solid black;
+      grid-row: span 4;
+      border-radius: 10px;
+    }
+    .boxes18 {
+      /* background-color: yellow; */
+      border: 1px solid black;
+      grid-row: span 4;
+      border-radius: 10px;
+    }
+    .boxes19 {
+      /* background-color: yellow; */
+      border: 1px solid black;
+      grid-row: span 4;
+      border-radius: 10px;
+    }
+    .boxes20 {
+      /* background-color: yellow; */
+      border: 1px solid black;
+      grid-row: span 4;
+      border-radius: 10px;
+
+    }
+    .nibo {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">pexels</div>
+    <nav>
+      <a href="#">Explore</a>
+      <div class="dropdown">
+        <a href="#">More ▾</a>
+        <div class="dropdown-content">
+          <a href="#">Discover Photos</a>
+          <a href="#">Leaderboard</a>
+          <a href="#">Challenges</a>
+          <a href="#">Free Videos</a>
+          <a href="#">Pexels Blog</a>
+        </div>
+      </div>
+      <a href="#">License</a>
+      <div class="nav-icons">
+        <span>🔔</span>
+        <div class="circle-icon">S</div>
+        <button class="upload-btn">Upload</button>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="overlay"></div>
+    <div class="hero-content">
+      <h1>The best free stock photos, royalty free<br>
+        images & videos shared by creators.</h1>
+      <div class="search-wrapper">
+        <select class="search-select">
+          <option>Photos</option>
+          <option>Videos</option>
+        </select>
+        <input class="search-input" type="text" placeholder="Search for free photos">
+        <button class="search-button">🔍</button>
+      </div>
+    </div>
+  </section>
+  <div class="newhead">
+    <p class="hp">Home</p>
+    <p class="hp">Videos</p>
+    <p class="hp">Leaderboard</p>
+    <p class="hp">Challenges</p>
+  </div>
+  <div class="headun">
+    <h1>Free Stock Photos</h1>
+    <button class="tbtn">Trending</button>
+  </div>
+  <div class="container">
+    <div class="boxes1">
+      <img src="./images/pexels-alexander-mass-748453803-31592655.jpg" class="nibo">
+    </div>
+    <div class="boxes2">
+      <img src="./images/pexels-aljona-ovtsinnikova-121486965-31295906.jpg" class="nibo">
+    </div>
+    <div class="boxes3">
+      <img src="./images/pexels-andy-barbour-6964308.jpg" class="nibo">
+    </div>
+    <div class="boxes4">
+      <img src="./images/pexels-beelal-ng-2151097530-31552834.jpg" class="nibo">
+    </div>
+    <div class="boxes5">
+      <img src="./images/pexels-casnafu-31203734.jpg" class="nibo">
+    </div>
+    <div class="boxes6">
+      <img src="./images/pexels-christelle-wehbe-72523922-31500099.jpg" class="nibo">
+    </div>
+    <div class="boxes7">
+      <img src="./images/pexels-cottonbro-3992134.jpg" class="nibo">
+    </div>
+    <div class="boxes8">
+      <img src="./images/pexels-deen-docs-2151173653-31581782.jpg" class="nibo">
+    </div>
+    <div class="boxes9">
+      <img src="./images/pexels-ersin-basturk-399622110-18301868.jpg" class="nibo">
+    </div>
+    <div class="boxes10">
+      <img src="./images/pexels-hameen-31633369.jpg" class="nibo">
+    </div>
+    <div class="boxes11">
+      <img src="./images/pexels-jay-soundo-2148060180-30472389.jpg" class="nibo">
+    </div>
+    <div class="boxes12">
+      <img src="./images/pexels-kuma-jio-2150949207-31416365.jpg" class="nibo">
+    </div>
+    <div class="boxes13">
+      <img src="./images/pexels-merwak_-399619273-26746959.jpg" class="nibo">
+    </div>
+    <div class="boxes14">
+      <img src="./images/pexels-mgshotz-31633701.jpg" class="nibo">
+    </div>
+    <div class="boxes15">
+      <img src="./images/pexels-nadin-sh-78971847-11232216.jpg" class="nibo">
+    </div>
+    <div class="boxes16">
+      <img src="./images/pexels-robert-erban-184982972-11279737.jpg" class="nibo">
+    </div>
+    <div class="boxes17">
+      <img src="./images/pexels-santesson89-31100360.jpg" class="nibo">
+    </div>
+    <div class="boxes18">
+      <img src="./images/pexels-vubui-30012258.jpg" class="nibo">
+    </div>
+    <div class="boxes19">
+      <img src="./images/pexels-ysnapshotjournal-1675356955-31530553.jpg" class="nibo">
+    </div>
+    <div class="boxes20">
+      <video src="./images/13346630_1080_1920_60fps.mp4" class="nibo" autoplay loop></video>
+    </div>
+  </div>
+</body>
+</html>
